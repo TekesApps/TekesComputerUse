@@ -1,0 +1,7 @@
+.build/
+.swiftpm/
+Plugin/bin/
+dist/
+.DS_Store
+xcuserdata/
+*.tekesplugin

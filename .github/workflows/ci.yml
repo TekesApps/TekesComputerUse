@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  swift:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: Toolchain versions
+        run: |
+          xcodebuild -version
+          swift --version
+          version=$(swift --version 2>&1 | sed -n 's/.*Swift version \([0-9][0-9]*\.[0-9][0-9]*\).*/\1/p' | head -n 1)
+          major=${version%%.*}
+          minor=${version#*.}
+          if [ -z "$version" ] || [ "$major" -lt 6 ] || { [ "$major" -eq 6 ] && [ "$minor" -lt 1 ]; }; then
+            echo "Swift 6.1 or later is required (found: ${version:-unknown})" >&2
+            exit 1
+          fi
+      - name: Build
+        run: swift build
+      - name: Test
+        run: swift test
+      - name: Build and verify standalone helper
+        run: sh Scripts/build-helper.sh
+      - name: MCP initialize smoke test
+        run: |
+          response=$(printf '%s\n' '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{}}' | dist/TekesComputerUseHelper)
+          printf '%s\n' "$response" | grep -q '"tekes-computer-use"'

@@ -1,0 +1,19 @@
+{
+  "manifestVersion": 1,
+  "id": "com.tekes.computer-use",
+  "version": "0.1.8",
+  "displayName": "Tekes Computer Use",
+  "description": "Controls macOS applications through Accessibility and ScreenCaptureKit.",
+  "minimumHostVersion": "0.1.0",
+  "platforms": [{"os":"macos","minimumVersion":"15.0","architectures":["arm64"]}],
+  "capabilities": [
+    {"id":"native-helper.execute","reason":"Run the signed MCP helper with its macOS TCC identity."},
+    {"id":"accessibility.control","reason":"Read and operate application accessibility elements."},
+    {"id":"screen.capture","reason":"Capture the selected application window for visual fallback."}
+  ],
+  "components": [
+    {"id":"computer-use","type":"mcp-server","path":"bin/TekesComputerUseHelper.app/Contents/MacOS/TekesComputerUseHelper","capabilities":["native-helper.execute","accessibility.control","screen.capture"]},
+    {"id":"computer-use-guidance","type":"skill","path":"skills/computer-use","capabilities":[]},
+    {"id":"computer-use-assets","type":"assets","path":"assets","capabilities":[]}
+  ]
+}
